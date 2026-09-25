@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Podcast Hub</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+    }
+
+    /* HEADER */
+    header {
+      background: #181818;
+      padding: 18px 7%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #333;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 25px;
+      font-weight: bold;
+    }
+
+    .logo span {
+      color: #e63946;
+    }
+
+    nav a {
+      color: #ddd;
+      text-decoration: none;
+      margin-left: 25px;
+      font-size: 15px;
+    }
+
+    nav a:hover {
+      color: #e63946;
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 450px;
+      padding: 100px 7%;
+      display: flex;
+      align-items: center;
+      background:
+        linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.9)),
+        radial-gradient(circle at center, #444, #111 70%);
+    }
+
+    .hero-content {
+      max-width: 700px;
+    }
+
+    .hero h1 {
+      font-size: 55px;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 span {
+      color: #e63946;
+    }
+
+    .hero p {
+      color: #bbb;
+      line-height: 1.7;
+      margin-bottom: 30px;
+    }
+
+    .button {
+      display: inline-block;
+      background: #e63946;
+      color: white;
+      padding: 13px 25px;
+      border-radius: 7px;
+      text-decoration: none;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      background: #ff4d5a;
+    }
+
+    /* SEARCH */
+    .search-section {
+      padding: 40px 7% 10px;
+    }
+
+    .search-box {
+      width: 100%;
+      padding: 15px 20px;
+      background: #222;
+      border: 1px solid #444;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      outline: none;
+    }
+
+    /* PODCASTS */
+    .podcasts {
+      padding: 50px 7%;
+    }
+
+    .section-title {
+      font-size: 30px;
+      margin-bottom: 25px;
+    }
+
+    .section-title span {
+      color: #e63946;
+    }
+
+    .categories {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+    }
+
+    .category {
+      background: #222;
+      border: 1px solid #444;
+      padding: 9px 17px;
+      border-radius: 20px;
+      cursor: pointer;
+      color: #ccc;
+    }
+
+    .category:hover {
+      background: #e63946;
+      color: white;
+    }
+
+    .podcast-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+    }
+
+    .podcast-card {
+      background: #1b1b1b;
+      border: 1px solid #292929;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: .3s;
+    }
+
+    .podcast-card:hover {
+      transform: translateY(-5px);
+      border-color: #e63946;
+    }
+
+    .podcast-image {
+      height: 200px;
+      background: linear-gradient(135deg, #333, #111);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+    }
+
+    .podcast-info {
+      padding: 20px;
+    }
+
+    .podcast-info h3 {
+      margin-bottom: 10px;
+    }
+
+    .podcast-info p {
+      color: #999;
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    /* PLAYER */
+    .player {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #191919;
+      border-top: 1px solid #333;
+      padding: 15px 7%;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      z-index: 200;
+    }
+
+    .player-info {
+      flex: 1;
+    }
+
+    .player-info strong {
+      display: block;
+    }
+
+    .player-info small {
+      color: #888;
+    }
+
+    audio {
+      width: 350px;
+      max-width: 50%;
+    }
+
+    /* FOOTER */
+    footer {
+      background: #181818;
+      padding: 50px 7% 100px;
+      text-align: center;
+      color: #888;
+      margin-top: 30px;
+    }
+
+    footer h2 {
+      color: white;
+      margin-bottom: 10px;
+    }
+
+    /* MOBILE */
+    @media (max-width: 700px) {
+
+      header {
+        padding: 15px 5%;
+      }
+
+      nav {
+        display: none;
+      }
+
+      .hero {
+        padding: 70px 5%;
+      }
+
+      .hero h1 {
+        font-size: 40px;
+      }
+
+      .podcasts,
+      .search-section {
+        padding-left: 5%;
+        padding-right: 5%;
+      }
+
+      .player {
+        flex-wrap: wrap;
+      }
+
+      audio {
+        max-width: 100%;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      POD<span>CAST</span>
+    </div>
+
+    <nav>
+      <a href="#">Home</a>
+      <a href="#podcasts">Podcasts</a>
+      <a href="#categories">Categories</a>
+      <a href="#about">About</a>
+    </nav>
+  </header>
+
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+
+      <h1>
+        Stories Worth <span>Listening</span> To.
+      </h1>
+
+      <p>
+        Discover interesting conversations, comedy,
+        real stories and inspiring ideas from creators
+        around the world.
+      </p>
+
+      <a href="#podcasts" class="button">
+        Explore Podcasts
+      </a>
+
+    </div>
+  </section>
+
+
+  <!-- SEARCH -->
+  <section class="search-section">
+
+    <input
+      type="text"
+      id="search"
+      class="search-box"
+      placeholder="Search podcasts..."
+      onkeyup="searchPodcasts()"
+    >
+
+  </section>
+
+
+  <!-- PODCASTS -->
+  <section class="podcasts" id="podcasts">
+
+    <h2 class="section-title">
+      Latest <span>Podcasts</span>
+    </h2>
+
+    <!-- CATEGORIES -->
+    <div class="categories" id="categories">
+
+      <div class="category">Comedy</div>
+      <div class="category">Crime</div>
+      <div class="category">Business</div>
+      <div class="category">Stories</div>
+      <div class="category">Motivation</div>
+      <div class="category">News</div>
+
+    </div>
+
+
+    <!-- PODCAST GRID -->
+    <div class="podcast-grid" id="podcastGrid">
+
+
+      <!-- PODCAST 1 -->
+      <div class="podcast-card">
+
+        <div class="podcast-image">
+          🎙️
+        </div>
+
+        <div class="podcast-info">
+
+          <h3>Late Night Talk</h3>
+
+          <p>
+            Funny conversations and unexpected stories.
+          </p>
+
+          <button
+            class="button"
+            onclick="playPodcast(
+              'Late Night Talk',
+              'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
+            )">
+            ▶ Play
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- PODCAST 2 -->
+      <div class="podcast-card">
+
+        <div class="podcast-image">
+          😂
+        </div>
+
+        <div class="podcast-info">
+
+          <h3>Comedy Unleashed</h3>
+
+          <p>
+            The funniest conversations and comedy moments.
+          </p>
+
+          <button
+            class="button"
+            onclick="playPodcast(
+              'Comedy Unleashed',
+              'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
+            )">
+            ▶ Play
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- PODCAST 3 -->
+      <div class="podcast-card">
+
+        <div class="podcast-image">
+          🔥
+        </div>
+
+        <div class="podcast-info">
+
+          <h3>Real Conversations</h3>
+
+          <p>
+            Honest conversations about life and success.
+          </p>
+
+          <button
+            class="button"
+            onclick="playPodcast(
+              'Real Conversations',
+              'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'
+            )">
+            ▶ Play
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- PODCAST 4 -->
+      <div class="podcast-card">
+
+        <div class="podcast-image">
+          🎧
+        </div>
+
+        <div class="podcast-info">
+
+          <h3>Deep Stories</h3>
+
+          <p>
+            Stories that make you think differently.
+          </p>
+
+          <button
+            class="button"
+            onclick="playPodcast(
+              'Deep Stories',
+              'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3'
+            )">
+            ▶ Play
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ABOUT -->
+  <section class="podcasts" id="about">
+
+    <h2 class="section-title">
+      About <span>Podcast Hub</span>
+    </h2>
+
+    <p style="color:#aaa; line-height:1.8; max-width:700px;">
+      Podcast Hub is a place to discover conversations,
+      comedy, stories and ideas from creators around the world.
+      New episodes can be added to the platform every week.
+    </p>
+
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer>
+
+    <h2>POD<span style="color:#e63946;">CAST</span></h2>
+
+    <p>
+      Listen. Discover. Connect.
+    </p>
+
+    <br>
+
+    © 2026 Podcast Hub. All rights reserved.
+
+  </footer>
+
+
+  <!-- AUDIO PLAYER -->
+  <div class="player">
+
+    <div class="player-info">
+
+      <strong id="nowPlaying">
+        Nothing Playing
+      </strong>
+
+      <small>
+        Podcast Player
+      </small>
+
+    </div>
+
+    <audio id="audioPlayer" controls>
+    </audio>
+
+  </div>
+
+
+  <!-- JAVASCRIPT -->
+  <script>
+
+    function playPodcast(name, audio) {
+
+      const player = document.getElementById("audioPlayer");
+
+      const title = document.getElementById("nowPlaying");
+
+      title.textContent = name;
+
+      player.src = audio;
+
+      player.play();
+
+    }
+
+
+    function searchPodcasts() {
+
+      const search =
+        document
+        .getElementById("search")
+        .value
+        .toLowerCase();
+
+      const cards =
+        document.querySelectorAll(".podcast-card");
+
+      cards.forEach(card => {
+
+        const text =
+          card.textContent.toLowerCase();
+
+        if (text.includes(search)) {
+
+          card.style.display = "";
+
+        } else {
+
+          card.style.display = "none";
+
+        }
+
+      });
+
+    }
+
+  </script>
+
+</body>
+</html>
